@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" name="morse" datamodel="ecmascript" version="1.0">
+  <datamodel>
+    <data id="dot_duration" expr="250"/>
+  </datamodel>
+  <state id="released">
+    <state id="initial">
+      <onentry>
+        <send id="short_pause_timeout" event="short_pause_timeout" delayexpr="dot_duration * 3 + 'ms'"/>
+      </onentry>
+      <onexit>
+        <cancel sendid="short_pause_timeout"/>
+      </onexit>
+      <transition event="short_pause_timeout" target="short_pause">
+      </transition>
+      <transition event="device.press" target="pressed">
+      </transition>
+    </state> 
+    <state id="short_pause">
+      <onentry>
+        <send id="long_pause_timeout" event="long_pause_timeout" delayexpr="dot_duration * 4 + 'ms'"/>
+      </onentry>
+      <onexit>
+        <cancel sendid="long_pause_timeout"/>
+      </onexit>
+      <transition event="long_pause_timeout" target="long_pause"/>
+      <transition event="device.press" target="pressed">
+        <send type="http://scxml.io/scxmld" target="scxml://publish" event="long_pause"/> 
+      </transition>
+    </state> 
+    <state id="long_pause">
+      <onentry>
+        <send type="http://scxml.io/scxmld" target="scxml://publish" event="long_pause"/> 
+      </onentry>
+      <transition event="device.press" target="pressed"></transition>
+    </state> 
+  </state>
+  <state id="pressed">
+    <state id="dot">
+      <onentry>
+        <send id="dash-timeout" event="dash-timeout" delayexpr="dot_duration * 3 + 'ms'"/>
+      </onentry>
+      <onexit>
+        <cancel sendid="dash-timeout"/>
+      </onexit>
+      <transition event="dash-timeout" target="dash"/>
+      <transition event="device.release" target="released">
+        <send type="http://scxml.io/scxmld" target="scxml://publish" event="dot"/> 
+      </transition>
+    </state>
+    <state id="dash">
+      <transition event="device.release" target="released">
+        <send type="http://scxml.io/scxmld" target="scxml://publish" event="dash"/> 
+      </transition>
+    </state>
+  </state> 
+</scxml>
