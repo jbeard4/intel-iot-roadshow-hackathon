@@ -45,6 +45,10 @@ var scxmlString =
             state.transitions.map(function(t){
               return '<transition target="' + t.target + '" event="' + t.event + '"/>' 
             }).join('') + 
+            (
+              state.id === 'idle' ? 
+                '<transition target="idle" event="long_pause"><send type="http://scxml.io/scxmld" target="scxml://publish" event="character" contentexpr="\' \'"></send></transition>' 
+                : '' ) + 
         '</state>' 
         }).join('') + 
       '</state>' +
