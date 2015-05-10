@@ -1,6 +1,5 @@
 var morseCode = require('./morse-code.json');
 
-
 function State(id,emit){
   this.id = id;
   this.transitions = {};
@@ -23,9 +22,9 @@ Object.keys(morseCode).forEach(function(c){
       currentNode.transitions[s] = 
         currentNode.transitions[s] || new State(prefix);
   });
-  currentNode.transitions['-'] = new State('$terminal-' + prefix,c);   //followed by a dash, takes you to terminal
+  currentNode.transitions['-'] = new State(prefix + '-terminal',c);   //followed by a dash, takes you to terminal
 
   //anything else takes you to a parser error
 });
 
-console.log(JSON.stringify(trieRoot,4,4));
+module.exports = trieRoot;
