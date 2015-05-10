@@ -6,7 +6,7 @@ function State(id,emit){
   this.emit = emit;
 }
 
-var trieRoot = new State('$root');
+var trieRoot = new State('idle');
 
 Object.keys(morseCode).forEach(function(c){
   var code = morseCode[c]; 
@@ -22,7 +22,7 @@ Object.keys(morseCode).forEach(function(c){
       currentNode.transitions[s] = 
         currentNode.transitions[s] || new State(prefix);
   });
-  currentNode.transitions['-'] = new State(prefix + '-terminal',c);   //followed by a dash, takes you to terminal
+  currentNode.transitions['shortpause'] = new State(prefix + '-terminal',c);   //followed by a dash, takes you to terminal
 
   //anything else takes you to a parser error
 });

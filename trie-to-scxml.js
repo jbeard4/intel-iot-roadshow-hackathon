@@ -8,9 +8,9 @@ var states = [];
 
 function walk(node){
   if(!node.transitions) return;
+  states.push(node);
   node.transitions = Object.keys(node.transitions).map(function(event){
     var childState = node.transitions[event];
-    states.push(childState);
     walk(childState);
     return {
       event : event,
@@ -31,7 +31,9 @@ var scxmlString =
       return '<state id="' + state.id + '">' + 
         (
           state.emit ? 
-            '<onentry><send event="terminal"><param name="character" expr="\'' + state.emit + '\'"/></send></onentry>' : '' ) + 
+            '<onentry><send type="http://scxml.io/scxmld" target="scxml://publish" event="character" contentexpr="\'' + state.emit + '\'"></send></onentry>' +
+            '<transition target="idle"/>' //go back to start 
+            : '' ) + 
         state.transitions.map(function(t){
           return '<transition target="' + t.target + '" event="' + t.event + '"/>' 
         }).join('') + 
