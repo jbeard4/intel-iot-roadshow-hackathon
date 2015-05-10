@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scxml xmlns="http://www.w3.org/2005/07/scxml" name="morse" datamodel="ecmascript" version="1.0">
   <datamodel>
     <data id="dot_duration" expr="250"/>
   </datamodel>
@@ -19,39 +17,37 @@
     <state id="short_pause">
       <onentry>
         <send id="long_pause_timeout" event="long_pause_timeout" delayexpr="dot_duration * 4 + 'ms'"/>
+        <send event="short_pause"/> 
       </onentry>
       <onexit>
         <cancel sendid="long_pause_timeout"/>
       </onexit>
       <transition event="long_pause_timeout" target="long_pause"/>
-      <transition event="device.press" target="pressed">
-        <send type="http://scxml.io/scxmld" target="scxml://publish" event="long_pause"/> 
-      </transition>
+      <transition event="device.press" target="pressed"/>
     </state> 
     <state id="long_pause">
       <onentry>
-        <send type="http://scxml.io/scxmld" target="scxml://publish" event="long_pause"/> 
+        <send event="long_pause"/> 
       </onentry>
       <transition event="device.press" target="pressed"></transition>
     </state> 
   </state>
   <state id="pressed">
-    <state id="dot">
+    <state id="sending_dot">
       <onentry>
         <send id="dash-timeout" event="dash-timeout" delayexpr="dot_duration * 3 + 'ms'"/>
       </onentry>
       <onexit>
         <cancel sendid="dash-timeout"/>
       </onexit>
-      <transition event="dash-timeout" target="dash"/>
+      <transition event="dash-timeout" target="sending_dash"/>
       <transition event="device.release" target="released">
-        <send type="http://scxml.io/scxmld" target="scxml://publish" event="dot"/> 
+        <send event="dot"/> 
       </transition>
     </state>
-    <state id="dash">
+    <state id="sending_dash">
       <transition event="device.release" target="released">
-        <send type="http://scxml.io/scxmld" target="scxml://publish" event="dash"/> 
+        <send event="dash"/> 
       </transition>
     </state>
   </state> 
-</scxml>
